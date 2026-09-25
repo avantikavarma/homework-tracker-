@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quarter 1 Assignment Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Quicksand:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #faf5e8;
+    --bg-alt: #faf5e8;
+    --card: #fffdf7;
+    --border: #bcd2af;
+    --text: #33422c;
+    --text-soft: #5f7554;
+    --accent: #4f6b45;       /* dark sage */
+    --accent-dark: #34492c;  /* deep forest */
+    --maroon: #a8503c;       /* dark terracotta */
+    --gold: #a67c24;         /* dark honey */
+    --olive: #55702f;        /* dark moss */
+    --today-ring: #4f6b45;
+    --shadow: rgba(122, 140, 110, 0.18);
+    --danger: #c97b6a;
+    --danger-bg: #f6e6de;
+    --ring: #e8e0cf;
+    color-scheme: light dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #faf5e8;
+      --bg-alt: #faf5e8;
+      --card: #fffdf7;
+      --border: #bcd2af;
+      --text: #33422c;
+      --text-soft: #5f7554;
+      --accent: #4f6b45;
+      --accent-dark: #34492c;
+      --maroon: #a8503c;
+      --gold: #a67c24;
+      --olive: #55702f;
+      --today-ring: #4f6b45;
+      --ring: #e8e0cf;
+      --shadow: rgba(122, 140, 110, 0.18);
+      --danger: #c97b6a;
+      --danger-bg: #f6e6de;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #faf5e8;
+    --bg-alt: #faf5e8;
+    --card: #fffdf7;
+    --border: #bcd2af;
+    --text: #33422c;
+    --text-soft: #5f7554;
+    --accent: #4f6b45;
+    --accent-dark: #34492c;
+    --maroon: #a8503c;
+    --gold: #a67c24;
+    --olive: #55702f;
+    --today-ring: #4f6b45;
+    --ring: #e8e0cf;
+    --shadow: rgba(122, 140, 110, 0.18);
+    --danger: #c97b6a;
+    --danger-bg: #f6e6de;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+  }
+
+  html {
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  body {
+    margin: 0;
+    min-height: 100%;
+    background:
+      radial-gradient(circle at 10% 0%, var(--bg-alt), transparent 55%),
+      radial-gradient(circle at 90% 10%, var(--bg-alt), transparent 50%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Quicksand', -apple-system, 'Segoe UI', Roboto, sans-serif;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 20px);
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  header.page-head {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+
+  header.page-head h1 {
+    font-family: 'Patrick Hand', 'Segoe Print', 'Bradley Hand', cursive;
+    font-size: clamp(1.9rem, 5vw, 2.6rem);
+    margin: 0 0 4px;
+    letter-spacing: 0.5px;
+    color: var(--accent-dark);
+    font-weight: normal;
+  }
+
+  header.page-head p {
+    margin: 0;
+    color: var(--text-soft);
+    font-size: 0.95rem;
+    font-style: italic;
+  }
+
+  .doodle-row {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin: 2px 0 10px;
+    opacity: 0.9;
+  }
+
+  .doodle-row svg { width: 46px; height: 46px; }
+
+  .ring-strip {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-bottom: -9px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .ring-strip span {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 3px solid var(--ring);
+    display: block;
+  }
+
+  .banner {
+    display: none;
+    background: linear-gradient(135deg, var(--maroon), var(--accent-dark));
+    color: #fff8ef;
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 4px 14px var(--shadow);
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .banner.show { display: block; }
+  .banner strong { display: block; margin-bottom: 4px; font-size: 1rem; }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav button, .notif-btn, .add-btn {
+    font-family: inherit;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+  }
+
+  .nav button:hover, .notif-btn:hover, .add-btn:hover {
+    box-shadow: 0 3px 10px var(--shadow);
+    transform: translateY(-1px);
+  }
+
+  .nav button:active, .notif-btn:active, .add-btn:active {
+    transform: translateY(0);
+  }
+
+  .month-label {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--accent-dark);
+    min-width: 170px;
+    text-align: center;
+  }
+
+  .right-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .add-btn {
+    background: var(--accent);
+    border-color: var(--accent-dark);
+    color: #fff8ef;
+    font-weight: bold;
+  }
+
+  .notif-btn.enabled {
+    background: var(--olive);
+    color: #fff8ef;
+    border-color: var(--olive);
+  }
+
+  .calendar-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 22px;
+    padding: 16px;
+    box-shadow: 0 6px 20px var(--shadow);
+    overflow-x: auto;
+  }
+
+  .month-label {
+    font-family: 'Patrick Hand', cursive;
+    font-size: 1.4rem !important;
+  }
+
+  .cal-section-label {
+    text-align: center;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 1.1rem;
+    color: var(--olive);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+
+  table.cal {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 560px;
+  }
+
+  table.cal th {
+    color: var(--accent-dark);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 6px 4px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  table.cal td {
+    width: 14.28%;
+    height: 90px;
+    vertical-align: top;
+    border: 1px solid var(--border);
+    padding: 4px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+
+  table.cal td:hover {
+    background: var(--bg-alt);
+  }
+
+  table.cal td.empty {
+    cursor: default;
+    background: transparent;
+    border-color: transparent;
+  }
+
+  table.cal td.empty:hover {
+    background: transparent;
+  }
+
+  .day-num {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: var(--text-soft);
+  }
+
+  td.today .day-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--today-ring);
+    color: #fff8ef;
+  }
+
+  .items-in-cell {
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .chip {
+    font-size: 0.68rem;
+    padding: 2px 5px;
+    border-radius: 6px;
+    color: #fff8ef;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .chip.homework { background: var(--accent); }
+  .chip.test { background: var(--maroon); }
+  .chip.project { background: var(--gold); color: #fff8ef; }
+  .chip.assignment { background: var(--olive); }
+
+  .more-chip {
+    font-size: 0.65rem;
+    color: var(--text-soft);
+  }
+
+  section.upcoming {
+    margin-top: 22px;
+  }
+
+  section.upcoming h2 {
+    color: var(--accent-dark);
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+
+  .upcoming-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .upcoming-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot.homework { background: var(--accent); }
+  .dot.test { background: var(--maroon); }
+  .dot.project { background: var(--gold); }
+  .dot.assignment { background: var(--olive); }
+
+  .upcoming-text { flex: 1; min-width: 0; }
+  .upcoming-title { font-weight: bold; }
+  .upcoming-meta { font-size: 0.8rem; color: var(--text-soft); }
+
+  .del-btn {
+    border: none;
+    background: transparent;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 4px 8px;
+    border-radius: 8px;
+  }
+  .del-btn:hover { background: var(--danger-bg); }
+
+  .empty-state {
+    color: var(--text-soft);
+    font-style: italic;
+    padding: 10px 2px;
+  }
+
+  /* Modal */
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(40, 25, 12, 0.45);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 50;
+  }
+  .overlay.show { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 10px 30px var(--shadow);
+  }
+
+  .modal h3 {
+    margin-top: 0;
+    color: var(--accent-dark);
+  }
+
+  .field {
+    margin-bottom: 12px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    margin-bottom: 4px;
+  }
+
+  .field input[type="text"],
+  .field input[type="date"],
+  .field select,
+  .field textarea {
+    width: 100%;
+    font-family: inherit;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+
+  .field textarea {
+    resize: vertical;
+    min-height: 50px;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .modal-actions button {
+    font-family: inherit;
+    border-radius: 10px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  .modal-actions .save {
+    background: var(--accent);
+    color: #fff8ef;
+    border-color: var(--accent-dark);
+    font-weight: bold;
+  }
+
+  .leaf {
+    position: fixed;
+    top: -30px;
+    font-size: 1.1rem;
+    pointer-events: none;
+    opacity: 0.6;
+    animation: drift linear forwards;
+    z-index: 1;
+  }
+
+  @keyframes drift {
+    to { transform: translateY(105vh) rotate(140deg); }
+  }
+
+  footer.note {
+    text-align: center;
+    color: var(--text-soft);
+    font-size: 0.78rem;
+    margin-top: 22px;
+  }
+
+  .corner-doodle {
+    position: fixed;
+    opacity: 0.55;
+    pointer-events: none;
+    z-index: 0;
+    width: 90px;
+    height: 90px;
+  }
+  .corner-doodle.tl { top: 10px; left: 10px; }
+  .corner-doodle.tr { top: 10px; right: 10px; }
+  .corner-doodle.bl { bottom: 10px; left: 10px; }
+  .corner-doodle.br { bottom: 10px; right: 10px; }
+  .corner-doodle.ml { top: 50%; left: 6px; transform: translateY(-50%); }
+  .corner-doodle.mr { top: 50%; right: 6px; transform: translateY(-50%); }
+
+  @media (max-width: 1200px) {
+    .corner-doodle.ml, .corner-doodle.mr { display: none; }
+  }
+
+  @media (max-width: 980px) {
+    .corner-doodle { display: none; }
+  }
+
+  .inline-doodle {
+    width: 20px;
+    height: 20px;
+    vertical-align: -4px;
+    margin-right: 4px;
+  }
+
+  /* ---- Notepad ---- */
+  section.notepad-section {
+    margin-top: 24px;
+  }
+
+  section.notepad-section h2 {
+    font-family: 'Patrick Hand', cursive;
+    color: var(--accent-dark);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+  }
+
+  .notepad-card {
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        var(--card),
+        var(--card) 30px,
+        var(--border) 31px,
+        var(--card) 32px
+      );
+    border: 2px solid var(--border);
+    border-radius: 18px;
+    padding: 14px 16px 6px;
+    box-shadow: 0 6px 20px var(--shadow);
+    position: relative;
+  }
+
+  .notepad-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 34px;
+    bottom: 0;
+    width: 2px;
+    background: var(--maroon);
+    opacity: 0.35;
+  }
+
+  #notepadArea {
+    width: 100%;
+    min-height: 160px;
+    resize: vertical;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: 'Patrick Hand', cursive;
+    font-size: 1.05rem;
+    line-height: 32px;
+    color: var(--text);
+    padding-left: 20px;
+  }
+
+  .notepad-status {
+    text-align: right;
+    font-size: 0.72rem;
+    color: var(--text-soft);
+    padding: 4px 4px 8px;
+  }
+</style>
+</head>
+<body>
+<svg class="corner-doodle tl" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M20 70 C10 60 8 45 16 32 C24 42 26 55 20 70 Z" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M20 70 C28 58 34 44 30 28 C20 36 16 52 20 70 Z" fill="none" stroke="var(--olive)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M8 78 h26 l-2 9 h-22 z" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/>
+</svg>
+<svg class="corner-doodle tr" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <circle cx="55" cy="30" r="8" fill="none" stroke="var(--maroon)" stroke-width="2"/>
+  <circle cx="68" cy="22" r="5" fill="none" stroke="var(--maroon)" stroke-width="2"/>
+  <circle cx="72" cy="36" r="6" fill="none" stroke="var(--maroon)" stroke-width="2"/>
+  <path d="M60 38 C55 50 55 60 60 72" fill="none" stroke="var(--olive)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M48 76 h26 l-2 9 h-22 z" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/>
+</svg>
+<svg class="corner-doodle bl" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M45 15 C50 30 50 45 45 60" fill="none" stroke="var(--accent-dark)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M45 30 C35 26 28 28 22 36 C32 40 40 38 45 30 Z" fill="none" stroke="var(--accent)" stroke-width="2"/>
+  <path d="M45 45 C55 41 62 43 68 51 C58 55 50 53 45 45 Z" fill="none" stroke="var(--olive)" stroke-width="2"/>
+  <ellipse cx="45" cy="66" rx="14" ry="6" fill="none" stroke="var(--gold)" stroke-width="2"/>
+</svg>
+<svg class="corner-doodle br" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M30 55 C24 45 24 34 32 24" fill="none" stroke="var(--maroon)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M32 24 C38 20 44 20 48 24" fill="none" stroke="var(--maroon)" stroke-width="2" stroke-linecap="round"/>
+  <ellipse cx="48" cy="22" rx="6" ry="4" fill="none" stroke="var(--gold)" stroke-width="2"/>
+  <path d="M20 60 h24 l-2 9 h-20 z" fill="none" stroke="var(--olive)" stroke-width="2" stroke-linejoin="round"/>
+</svg>
+<svg class="corner-doodle ml" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <circle cx="45" cy="30" r="6" fill="none" stroke="var(--maroon)" stroke-width="2"/>
+  <path d="M45 24 C41 18 35 16 29 18 C33 24 38 27 45 24 Z" fill="none" stroke="var(--gold)" stroke-width="2"/>
+  <path d="M45 24 C49 18 55 16 61 18 C57 24 52 27 45 24 Z" fill="none" stroke="var(--gold)" stroke-width="2"/>
+  <path d="M45 30 C45 42 42 52 36 60" fill="none" stroke="var(--olive)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M45 42 C38 40 33 42 30 48 C37 50 42 48 45 42 Z" fill="none" stroke="var(--accent)" stroke-width="2"/>
+</svg>
+<svg class="corner-doodle mr" viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M45 14 C45 30 45 46 45 66" fill="none" stroke="var(--accent-dark)" stroke-width="2" stroke-linecap="round"/>
+  <path d="M45 24 C52 20 58 22 62 28 C55 32 49 30 45 24 Z" fill="none" stroke="var(--accent)" stroke-width="2"/>
+  <path d="M45 24 C38 20 32 22 28 28 C35 32 41 30 45 24 Z" fill="none" stroke="var(--olive)" stroke-width="2"/>
+  <path d="M45 40 C52 36 58 38 62 44 C55 48 49 46 45 40 Z" fill="none" stroke="var(--olive)" stroke-width="2"/>
+  <path d="M45 40 C38 36 32 38 28 44 C35 48 41 46 45 40 Z" fill="none" stroke="var(--accent)" stroke-width="2"/>
+  <circle cx="45" cy="12" r="4" fill="none" stroke="var(--gold)" stroke-width="2"/>
+</svg>
+<div class="wrap">
+  <header class="page-head">
+    <div class="doodle-row" aria-hidden="true">
+      <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <path d="M30 34 C22 30 18 20 22 10 C28 16 30 24 30 34 Z" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M30 34 C38 30 42 20 38 10 C32 16 30 24 30 34 Z" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M30 34 C24 32 16 28 12 20 C20 18 27 22 30 34 Z" fill="none" stroke="var(--olive)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M18 42 h24 l-3 12 h-18 z" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M30 34 L30 42" stroke="var(--accent-dark)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="18" r="7" fill="none" stroke="var(--maroon)" stroke-width="2"/>
+        <circle cx="30" cy="12" r="5" fill="none" stroke="var(--maroon)" stroke-width="2"/>
+        <circle cx="38" cy="20" r="6" fill="none" stroke="var(--maroon)" stroke-width="2"/>
+        <path d="M30 20 L30 40" stroke="var(--olive)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M17 46 h26 l-3 11 h-20 z" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h1>Quarter 1 Assignment Tracker</h1>
+    <p>a cozy little space for homework, assignments &amp; tests</p>
+  </header>
+
+  <div id="banner" class="banner"></div>
+
+  <div class="toolbar">
+    <div class="nav">
+      <button id="prevBtn" aria-label="Previous month">&larr;</button>
+      <div id="monthLabel" class="month-label"></div>
+      <button id="nextBtn" aria-label="Next month">&rarr;</button>
+    </div>
+    <div class="right-actions">
+      <button id="notifBtn" class="notif-btn">🔔 Enable reminders</button>
+      <button id="addBtn" class="add-btn">+ Add item</button>
+    </div>
+  </div>
+
+  <div class="ring-strip" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div class="calendar-card">
+    <div class="cal-section-label">📅 Quarter 1</div>
+    <table class="cal">
+      <thead>
+        <tr>
+          <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+        </tr>
+      </thead>
+      <tbody id="calBody"></tbody>
+    </table>
+  </div>
+
+  <section class="upcoming">
+    <h2><svg class="inline-doodle" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="20" cy="14" r="5" fill="none" stroke="var(--maroon)" stroke-width="2"/><path d="M20 19 C20 26 18 32 14 36" fill="none" stroke="var(--olive)" stroke-width="2" stroke-linecap="round"/><path d="M20 26 C25 24 29 26 31 31 C25 33 21 31 20 26 Z" fill="none" stroke="var(--accent)" stroke-width="2"/></svg>Upcoming</h2>
+    <div id="upcomingList" class="upcoming-list"></div>
+  </section>
+
+  <section class="notepad-section">
+    <h2><svg class="inline-doodle" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20 8 C20 16 20 24 20 34" fill="none" stroke="var(--accent-dark)" stroke-width="2" stroke-linecap="round"/><path d="M20 16 C26 12 31 14 34 19 C28 22 23 20 20 16 Z" fill="none" stroke="var(--accent)" stroke-width="2"/><path d="M20 16 C14 12 9 14 6 19 C12 22 17 20 20 16 Z" fill="none" stroke="var(--olive)" stroke-width="2"/></svg>Important notes</h2>
+    <div class="notepad-card">
+      <textarea id="notepadArea" placeholder="Jot down important reminders, links, or anything you don't want to forget..."></textarea>
+    </div>
+    <div class="notepad-status" id="notepadStatus"></div>
+  </section>
+
+  <footer class="note">🌱 Saved privately in this browser only.</footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="modalTitle">Add item</h3>
+    <div class="field">
+      <label for="itemTitle">Title</label>
+      <input type="text" id="itemTitle" placeholder="e.g. Chapter 5 problem set" maxlength="80">
+    </div>
+    <div class="field">
+      <label for="itemDate">Due date</label>
+      <input type="date" id="itemDate">
+    </div>
+    <div class="field">
+      <label for="itemType">Type</label>
+      <select id="itemType">
+        <option value="homework">Homework</option>
+        <option value="assignment">Assignment</option>
+        <option value="project">Project</option>
+        <option value="test">Test / Exam</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="itemNotes">Notes (optional)</label>
+      <textarea id="itemNotes" maxlength="200" placeholder="Any extra detail"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button id="cancelBtn" type="button">Cancel</button>
+      <button id="saveBtn" class="save" type="button">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var STORAGE_KEY = "autumnCalendarItems_v1";
+  var TYPE_LABELS = { homework: "Homework", assignment: "Assignment", project: "Project", test: "Test / Exam" };
+
+  var today = new Date();
+  today.setHours(0, 0, 0, 0);
+  var viewYear = today.getFullYear();
+  var viewMonth = today.getMonth();
+
+  var items = [];
+
+  function loadItems() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      items = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(items)) items = [];
+    } catch (e) {
+      items = [];
+    }
+  }
+
+  function saveItems() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    } catch (e) {
+      console.error("Could not save to storage", e);
+    }
+  }
+
+  function fmtDate(d) {
+    var y = d.getFullYear();
+    var m = String(d.getMonth() + 1).padStart(2, "0");
+    var day = String(d.getDate()).padStart(2, "0");
+    return y + "-" + m + "-" + day;
+  }
+
+  function parseDate(str) {
+    var parts = str.split("-");
+    return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+  }
+
+  function itemsForDate(dateStr) {
+    return items.filter(function (it) { return it.date === dateStr; });
+  }
+
+  var MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+  function renderCalendar() {
+    document.getElementById("monthLabel").textContent = MONTH_NAMES[viewMonth] + " " + viewYear;
+    var body = document.getElementById("calBody");
+    body.innerHTML = "";
+
+    var firstDay = new Date(viewYear, viewMonth, 1);
+    var startWeekday = firstDay.getDay();
+    var daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+    var cellsTotal = Math.ceil((startWeekday + daysInMonth) / 7) * 7;
+    var row;
+
+    for (var i = 0; i < cellsTotal; i++) {
+      if (i % 7 === 0) {
+        row = document.createElement("tr");
+        body.appendChild(row);
+      }
+      var td = document.createElement("td");
+      var dayNum = i - startWeekday + 1;
+
+      if (dayNum < 1 || dayNum > daysInMonth) {
+        td.className = "empty";
+      } else {
+        var cellDate = new Date(viewYear, viewMonth, dayNum);
+        var dateStr = fmtDate(cellDate);
+        var isToday = cellDate.getTime() === today.getTime();
+
+        var numDiv = document.createElement("div");
+        numDiv.className = "day-num";
+        numDiv.textContent = String(dayNum);
+        td.appendChild(numDiv);
+        if (isToday) td.classList.add("today");
+
+        var dayItems = itemsForDate(dateStr);
+        if (dayItems.length) {
+          var itemsWrap = document.createElement("div");
+          itemsWrap.className = "items-in-cell";
+          var maxShow = 2;
+          dayItems.slice(0, maxShow).forEach(function (it) {
+            var chip = document.createElement("div");
+            chip.className = "chip " + it.type;
+            chip.textContent = it.title;
+            itemsWrap.appendChild(chip);
+          });
+          if (dayItems.length > maxShow) {
+            var more = document.createElement("div");
+            more.className = "more-chip";
+            more.textContent = "+" + (dayItems.length - maxShow) + " more";
+            itemsWrap.appendChild(more);
+          }
+          td.appendChild(itemsWrap);
+        }
+
+        td.addEventListener("click", (function (ds) {
+          return function () { openModal(ds); };
+        })(dateStr));
+      }
+
+      row.appendChild(td);
+    }
+  }
+
+  function renderUpcoming() {
+    var list = document.getElementById("upcomingList");
+    list.innerHTML = "";
+
+    var upcoming = items
+      .filter(function (it) { return parseDate(it.date).getTime() >= today.getTime(); })
+      .sort(function (a, b) { return parseDate(a.date) - parseDate(b.date); })
+      .slice(0, 15);
+
+    if (!upcoming.length) {
+      var empty = document.createElement("div");
+      empty.className = "empty-state";
+      empty.textContent = "Nothing coming up. Click a date on the calendar to add something.";
+      list.appendChild(empty);
+      return;
+    }
+
+    upcoming.forEach(function (it) {
+      var row = document.createElement("div");
+      row.className = "upcoming-item";
+
+      var dot = document.createElement("div");
+      dot.className = "dot " + it.type;
+      row.appendChild(dot);
+
+      var textWrap = document.createElement("div");
+      textWrap.className = "upcoming-text";
+
+      var title = document.createElement("div");
+      title.className = "upcoming-title";
+      title.textContent = it.title;
+      textWrap.appendChild(title);
+
+      var d = parseDate(it.date);
+      var dayDiff = Math.round((d - today) / 86400000);
+      var when = dayDiff === 0 ? "Today" : dayDiff === 1 ? "Tomorrow" : d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+
+      var meta = document.createElement("div");
+      meta.className = "upcoming-meta";
+      meta.textContent = TYPE_LABELS[it.type] + " · " + when + (it.notes ? " · " + it.notes : "");
+      textWrap.appendChild(meta);
+
+      row.appendChild(textWrap);
+
+      var del = document.createElement("button");
+      del.className = "del-btn";
+      del.textContent = "✕";
+      del.title = "Remove";
+      del.addEventListener("click", function () {
+        items = items.filter(function (x) { return x.id !== it.id; });
+        saveItems();
+        renderAll();
+      });
+      row.appendChild(del);
+
+      list.appendChild(row);
+    });
+  }
+
+  function renderAll() {
+    renderCalendar();
+    renderUpcoming();
+  }
+
+  // ---- Modal ----
+  var overlay = document.getElementById("overlay");
+  var modalTitle = document.getElementById("modalTitle");
+  var itemTitleInput = document.getElementById("itemTitle");
+  var itemDateInput = document.getElementById("itemDate");
+  var itemTypeInput = document.getElementById("itemType");
+  var itemNotesInput = document.getElementById("itemNotes");
+
+  function openModal(prefillDate) {
+    modalTitle.textContent = "Add item";
+    itemTitleInput.value = "";
+    itemDateInput.value = prefillDate || fmtDate(today);
+    itemTypeInput.value = "homework";
+    itemNotesInput.value = "";
+    overlay.classList.add("show");
+    setTimeout(function () { itemTitleInput.focus(); }, 50);
+  }
+
+  function closeModal() {
+    overlay.classList.remove("show");
+  }
+
+  document.getElementById("addBtn").addEventListener("click", function () { openModal(fmtDate(today)); });
+  document.getElementById("cancelBtn").addEventListener("click", closeModal);
+  overlay.addEventListener("click", function (e) { if (e.target === overlay) closeModal(); });
+
+  document.getElementById("saveBtn").addEventListener("click", function () {
+    var title = itemTitleInput.value.trim();
+    var date = itemDateInput.value;
+    if (!title || !date) {
+      itemTitleInput.style.borderColor = title ? "" : "var(--danger)";
+      itemDateInput.style.borderColor = date ? "" : "var(--danger)";
+      return;
+    }
+    items.push({
+      id: "it_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8),
+      title: title,
+      date: date,
+      type: itemTypeInput.value,
+      notes: itemNotesInput.value.trim()
+    });
+    saveItems();
+    closeModal();
+    renderAll();
+  });
+
+  // ---- Month nav ----
+  document.getElementById("prevBtn").addEventListener("click", function () {
+    viewMonth--;
+    if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+    renderCalendar();
+  });
+  document.getElementById("nextBtn").addEventListener("click", function () {
+    viewMonth++;
+    if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+    renderCalendar();
+  });
+
+  // ---- Notifications ----
+  var notifBtn = document.getElementById("notifBtn");
+
+  function supportsNotifications() {
+    return typeof window.Notification !== "undefined";
+  }
+
+  function updateNotifBtn() {
+    if (!supportsNotifications()) {
+      notifBtn.textContent = "🔔 Not supported here";
+      notifBtn.disabled = true;
+      return;
+    }
+    if (Notification.permission === "granted") {
+      notifBtn.textContent = "🔔 Reminders on";
+      notifBtn.classList.add("enabled");
+    } else if (Notification.permission === "denied") {
+      notifBtn.textContent = "🔕 Notifications blocked";
+    } else {
+      notifBtn.textContent = "🔔 Enable reminders";
+      notifBtn.classList.remove("enabled");
+    }
+  }
+
+  notifBtn.addEventListener("click", function () {
+    if (!supportsNotifications()) return;
+    if (Notification.permission === "default") {
+      Notification.requestPermission().then(function () {
+        updateNotifBtn();
+        checkDueTomorrow(true);
+      });
+    } else if (Notification.permission === "granted") {
+      checkDueTomorrow(true);
+    }
+  });
+
+  function checkDueTomorrow(forceNotify) {
+    var tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    var tomorrowStr = fmtDate(tomorrow);
+    var dueTomorrow = itemsForDate(tomorrowStr);
+
+    var banner = document.getElementById("banner");
+    if (dueTomorrow.length) {
+      var names = dueTomorrow.map(function (it) { return it.title + " (" + TYPE_LABELS[it.type] + ")"; }).join(", ");
+      banner.innerHTML = "<strong>Due tomorrow</strong>" + names;
+      banner.classList.add("show");
+
+      if (supportsNotifications() && Notification.permission === "granted") {
+        try {
+          var alreadyShownKey = "autumnCalendarNotifShown_" + tomorrowStr;
+          var alreadyShown = forceNotify ? false : sessionStorage.getItem(alreadyShownKey);
+          if (!alreadyShown) {
+            new Notification("Due tomorrow \ud83c\udf42", {
+              body: names,
+              icon: undefined
+            });
+            try { sessionStorage.setItem(alreadyShownKey, "1"); } catch (e) {}
+          }
+        } catch (e) {
+          console.error("Notification failed", e);
+        }
+      }
+    } else {
+      banner.classList.remove("show");
+      banner.innerHTML = "";
+    }
+  }
+
+  // ---- Drifting botanical doodles (decorative) ----
+  function spawnLeaves() {
+    var leafChars = ["🌿", "🍃", "🌸", "🪴"];
+    var count = window.innerWidth < 480 ? 4 : 7;
+    for (var i = 0; i < count; i++) {
+      var leaf = document.createElement("div");
+      leaf.className = "leaf";
+      leaf.textContent = leafChars[Math.floor(Math.random() * leafChars.length)];
+      leaf.style.left = Math.random() * 100 + "vw";
+      var duration = 8 + Math.random() * 10;
+      leaf.style.animationDuration = duration + "s";
+      leaf.style.animationDelay = (Math.random() * 10) + "s";
+      leaf.style.fontSize = (0.9 + Math.random() * 0.8) + "rem";
+      document.body.appendChild(leaf);
+      (function (el, dur, delay) {
+        setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, (dur + delay) * 1000 + 200);
+      })(leaf, duration, parseFloat(leaf.style.animationDelay));
+    }
+  }
+
+  // ---- Notepad ----
+  var NOTEPAD_KEY = "autumnCalendarNotepad_v1";
+  var notepadArea = document.getElementById("notepadArea");
+  var notepadStatus = document.getElementById("notepadStatus");
+  var notepadTimer = null;
+
+  function loadNotepad() {
+    try {
+      var saved = localStorage.getItem(NOTEPAD_KEY);
+      if (saved !== null) notepadArea.value = saved;
+    } catch (e) {}
+  }
+
+  function saveNotepad() {
+    try {
+      localStorage.setItem(NOTEPAD_KEY, notepadArea.value);
+      notepadStatus.textContent = "Saved";
+      clearTimeout(notepadTimer);
+      notepadTimer = setTimeout(function () { notepadStatus.textContent = ""; }, 1500);
+    } catch (e) {
+      notepadStatus.textContent = "Could not save";
+    }
+  }
+
+  var notepadDebounce = null;
+  notepadArea.addEventListener("input", function () {
+    clearTimeout(notepadDebounce);
+    notepadDebounce = setTimeout(saveNotepad, 400);
+  });
+
+  // ---- Init ----
+  loadItems();
+  loadNotepad();
+  renderAll();
+  updateNotifBtn();
+  checkDueTomorrow(false);
+  spawnLeaves();
+  setInterval(spawnLeaves, 14000);
+})();
+</script>
+</body>
+</html>
